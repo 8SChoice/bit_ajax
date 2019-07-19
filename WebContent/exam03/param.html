@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script>
+	var httpRequest = null;
+	function getXMLHttpRequest() {
+		if (window.XMLHttpRequest)
+			return new XMLHttpRequest();
+		if (window.ActiveXObject)
+			return new ActiveXObject("microsoft.XMLHTTP");
+		return null;
+	}
+
+	function debugTrace(msg) {
+		var debug = document.getElementById("debug");
+		debug.value += msg;
+	}
+
+	function sendProcess(method,param) {
+		console.log('method:'+method);//method 대신에 arguments[0]
+		console.log('param:'+param); //param 대신에 arguments[1] 가능
+		console.log(arguments);
+		var msg = '';
+		msg += '----------------------------------------------\n';
+		msg += method+'/Ajax/param.jsp?name=' + param + '\n';
+		msg += '----------------------------------------------\n';
+
+		debugTrace(msg);
+		httpRequest = getXMLHttpRequest();
+		httpRequest.onreadystatechange = callbackFunction;
+
+		//익스플로러 한글깨짐 해결 위한 인코딩
+		//console.log('encode 전:' + param);
+		param = encodeURIComponent(param);
+		//console.log('encode 후:' + param);
+		var url = '/Ajax/exam03/param2.jsp';//'param2.jsp';
+		var args = 'name:'+param;
+		
+		//var url = 'param.jsp?name=' + param;
+		
+		if(method=='GET'){
+			httpRequest.open('GET', url+'?'+args, true); //'GET' 대신에 method 가능
+			httpRequest.send();	
+		} else if(method=='POST'){
+			httpRequest.open(method, url, true);
+			httpRequest.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+			httpRequest.send(args);
+		}
+		
+
+	}
+	function callbackFunction() {
+		var msg = '';
+		switch (httpRequest.readyState) {
+		case 1:
+			msg += 'Loading...\n';
+			break;
+		case 2:
+			msg += 'Loaded...\n';
+			break;
+		case 3:
+			msg += 'Interactive...\n';
+			break;
+		case 4:
+			msg += 'Complete...\n';
+			if (httpRequest.status == 200) {
+				msg += "정상적으로 처리가 완료되었습니다.\n";
+				msg += "실행결과\n";
+				msg += httpRequest.responseText.trim() + "\n";
+			} else
+				msg += '오류코드 :' + httpRequest.status + '\n';
+			//msg += '오류내용 :' + httpRequest.statusText + '\n\n';//톰캣8까지 지원
+			// httpRequest.statusText라는 상태 이름을 표기하는 방법은 tomcat8까지 지원.
+			break;
+
+		}
+		debugTrace(msg);
+	}
+</script>
+
+</head>
+<body>
+	<textarea rows="10" cols="80" id="debug"></textarea>
+	<br>
+	<!--  <input type="button" value="영문인자호출"
+		onclick="sendProcess('honggildong')">
+	<input type="button" value="한글인자호출" onclick="sendProcess('홍길동')">
+	<br>-->
+	<input type="button" value="GET영문인자호출" onclick="sendProcess('GET','honggildong')">
+	<input type="button" value="GET한글인자호출" onclick="sendProcess('GET','홍길동')">
+	<input type="button" value="POST영문인자호출" onclick="sendProcess('POST','honggildong')">
+	<input type="button" value="POST한글인자호출" onclick="sendProcess('POST','홍길동')">
+</body>
+</html>

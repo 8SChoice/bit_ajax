@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+	$(document).ready(function() {
+		$('button').click(function() {
+			var name = $("#name").val();
+			var age = $("#age").val();
+			/* $.ajax({
+				type : "get",
+				url : "param3.jsp",
+				//data : "name=hong&age=25"
+				data:{name:"홍길동", age:25},
+				success : function(data){
+					$("#debug").val(data);
+				}
+			}); */
+			/* 
+			$.post("param3.jsp",function(data){
+				$("#debug").val(data);
+			}); */
+			/* $.post("param3.jsp",//"name=홍길동&age=30"
+					{name:"강길순", age:33},function(data){
+				$("#debug").val(data);
+			}); */
+			$.ajax({
+				url:"param3.jsp",
+				data : {name:name, age:age},
+				success : function(data) {
+					$('#debug').val(data);
+			}
+
+			});
+			
+		});
+	});
+</script>
+</head>
+<body>
+	<textarea rows="10" cols="80" id="debug"></textarea>
+	<br> 이름 :
+	<input type="text" name="name" id="name">
+	<br> 나이 :
+	<input type="text" name="age" id="age">
+	<br>
+	<button>호출</button>
+</body>
+</html>
